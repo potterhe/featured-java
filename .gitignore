@@ -56,3 +56,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Vim ###
+# Swap files
+*.swp
+*.swo
+*.swm
+*.swn
+# Backup files
+*~
+.netrwhist
