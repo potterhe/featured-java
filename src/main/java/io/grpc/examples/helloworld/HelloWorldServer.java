@@ -3,6 +3,8 @@ package io.grpc.examples.helloworld;
 import io.grpc.Grpc;
 import io.grpc.InsecureServerCredentials;
 import io.grpc.Server;
+import io.grpc.protobuf.services.ProtoReflectionService;
+import io.grpc.protobuf.services.ProtoReflectionServiceV1;
 import io.grpc.stub.StreamObserver;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -23,6 +25,9 @@ public class HelloWorldServer {
     int port = 50051;
     server = Grpc.newServerBuilderForPort(port, InsecureServerCredentials.create())
         .addService(new GreeterImpl())
+        // gRPC 反射服务（v1 + v1alpha），供 grpcurl 等 CLI 工具发现服务，非官网示例原生内容
+        .addService(ProtoReflectionServiceV1.newInstance())
+        .addService(ProtoReflectionService.newInstance())
         .build()
         .start();
     logger.info("Server started, listening on " + port);
