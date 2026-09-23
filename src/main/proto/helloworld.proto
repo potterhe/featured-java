@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+
 option java_multiple_files = true;
 option java_package = "io.grpc.examples.helloworld";
 option java_outer_classname = "HelloWorldProto";
@@ -10,7 +12,19 @@ package helloworld;
 // The greeting service definition.
 service Greeter {
   // Sends a greeting
-  rpc SayHello (HelloRequest) returns (HelloReply) {}
+  rpc SayHello (HelloRequest) returns (HelloReply) {
+    // grpc-gateway 风格的 HTTP 映射注解，Armeria 转码、Envoy grpc_json_transcoder、
+    // grpc-gateway 均遵循同一套 HttpRule 规范：
+    // - GET  /v1/greeter/{name} ：路径参数映射到 HelloRequest.name
+    // - POST /v1/hello          ：请求体映射整个 HelloRequest（body: "*"）
+    option (google.api.http) = {
+      get: "/v1/greeter/{name}"
+      additional_bindings {
+        post: "/v1/hello"
+        body: "*"
+      }
+    };
+  }
 }
 
 // The request message containing the user's name.
