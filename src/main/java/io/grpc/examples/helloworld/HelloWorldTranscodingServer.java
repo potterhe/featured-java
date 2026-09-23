@@ -1,6 +1,7 @@
 package io.grpc.examples.helloworld;
 
 import com.linecorp.armeria.server.Server;
+import com.linecorp.armeria.server.file.FileService;
 import com.linecorp.armeria.server.grpc.GrpcService;
 import io.grpc.protobuf.services.ProtoReflectionServiceV1;
 import java.util.logging.Logger;
@@ -32,11 +33,16 @@ public class HelloWorldTranscodingServer {
     Server server = Server.builder()
         .http(8080)
         .service(grpcService)
+        // 将 protoc-gen-openapiv2 生成的 OpenAPI 文件对外提供：
+        // GET /openapi/helloworld.swagger.json
+        .serviceUnder("/openapi/",
+            FileService.of(HelloWorldTranscodingServer.class.getClassLoader(), "/openapi"))
         .build();
 
     server.start().join();
     logger.info("Server started, listening on 8080 (REST + gRPC)");
     logger.info("Try: curl http://localhost:8080/v1/greeter/world");
+    logger.info("Swagger: http://localhost:8080/openapi/helloworld.swagger.json");
 
     // 阻塞主线程直到 JVM 关闭时优雅停止服务器
     server.closeOnJvmShutdown().join();

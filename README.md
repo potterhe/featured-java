@@ -1,5 +1,7 @@
 # featured-java
 
+### grpc
+
 ```shell
 mvn compile exec:java -Dexec.mainClass=io.grpc.examples.helloworld.HelloWorldServer
 
@@ -16,4 +18,13 @@ grpcurl -plaintext -d '{"name":"world"}' localhost:50051 helloworld.Greeter/SayH
 # 服务端未开反射时，用 -proto 指定 proto 文件也可调用
 grpcurl -plaintext -proto src/main/proto/helloworld.proto \
   -d '{"name":"proto-file"}' localhost:50051 helloworld.Greeter/SayHello
+```
+
+### openapi
+
+```shell
+protoc -I src/main/proto -I src/main/proto-vendor \
+  --openapiv2_out=src/main/resources/openapi \
+  "--openapiv2_opt=Mhelloworld.proto=example.com/featured/helloworld" \
+  helloworld.proto
 ```
